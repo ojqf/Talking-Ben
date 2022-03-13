@@ -1,7 +1,9 @@
+import 'dotenv-flow/config.js';
 import theBot from './bot.js';
 import DbHandler from './DbHandler.js';
 
 import { START_MESSAGE } from './config.js';
+import startButton from './start-button.js';
 
 const dbHandler = new DbHandler('./db/index.json');
 
@@ -11,13 +13,7 @@ const commandsHandler = async (msg) => {
 
   const start = async () => {
     dbHandler.addUser(chatId);
-    return theBot.sendMessage(chatId, START_MESSAGE, {
-      reply_markup: {
-        keyboard: [[{ text: '☎️' }]],
-        one_time_keyboard: true,
-        resize_keyboard: true,
-      },
-    });
+    return theBot.sendMessage(chatId, START_MESSAGE, startButton);
   };
 
   const call = async () => {
@@ -28,7 +24,7 @@ const commandsHandler = async (msg) => {
   const randomAnswer = async () => {
     if (dbHandler.getState(chatId) === DbHandler.STATES_TITLES.OUT_OF_TALKING) return;
     const r = Math.random();
-    const pHangUp = 0.1;
+    const pHangUp = 0.08;
     const p = (1 - pHangUp) / 4;
     if (r < p * 1) return theBot.sendVideo(chatId, './Ben_videos/yes.mp4');
     if (r < p * 2) return theBot.sendVideo(chatId, './Ben_videos/no.mp4');
